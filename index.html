@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="#f5f5f5">
+    <link rel="manifest" href="manifest.json">
+    <title>📚 我的書架</title>
+    <style>
+        :root {
+            --bg: #f5f5f5;
+            --surface: #ffffff;
+            --text: #1a1a1a;
+            --text2: #888888;
+            --border: #e8e8e8;
+            --accent: #000;
+            --hover: #f0f0f0;
+            --tag-bg: #e8e8e8;
+            --tag-text: #333;
+        }
+        [data-theme="dark"] {
+            --bg: #1a1a1a;
+            --surface: #2a2a2a;
+            --text: #e0e0e0;
+            --text2: #999;
+            --border: #3a3a3a;
+            --accent: #fff;
+            --hover: #333;
+            --tag-bg: #3a3a3a;
+            --tag-text: #ccc;
+        }
+        *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+        body{
+            font-family:-apple-system,BlinkMacSystemFont,'PingFang HK',sans-serif;
+            background:var(--bg);color:var(--text);
+            min-height:100vh;padding:16px 16px 100px;
+            transition:background .3s,color .3s;
+        }
+        .header{
+            display:flex;justify-content:space-between;align-items:center;
+            padding:8px 0 16px;margin-bottom:16px;
+            border-bottom:2px solid var(--border);
+        }
+        .header h1{font-size:24px;font-weight:800;}
+        .header-btns{display:flex;gap:6px;}
+        .btn{
+            display:inline-flex;align-items:center;justify-content:center;gap:6px;
+            padding:12px 18px;border-radius:14px;border:2px solid var(--border);
+            background:var(--surface);color:var(--text);
+            font-size:15px;font-weight:600;cursor:pointer;
+            transition:all .15s;min-height:48px;font-family:inherit;white-space:nowrap;
+        }
+        .btn:active{transform:scale(.95);background:var(--hover);}
+        .btn-accent{background:var(--accent);color:var(--bg);border-color:var(--accent);}
+        .btn-sm{padding:8px 14px;font-size:14px;min-height:40px;border-radius:10px;}
+        .btn-xs{padding:6px 10px;font-size:13px;min-height:34px;border-radius:8px;}
+        .upload-row{display:flex;gap:10px;margin:16px 0;flex-wrap:wrap;}
+        .upload-row .btn{flex:1;min-width:140px;}
+        .search-bar{width:100%;padding:14px 18px;border:2px solid var(--border);border-radius:16px;font-size:16px;background:var(--surface);color:var(--text);font-family:inherit;margin:12px 0;}
+        .tag-row{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0;align-items:center;}
+        .tag-row .label{font-size:14px;font-weight:700;color:var(--text2);}
+        .tag{padding:8px 14px;border-radius:20px;font-size:13px;font-weight:600;background:var(--tag-bg);color:var(--tag-text);border:2px solid transparent;cursor:pointer;transition:all .2s;}
+        .tag.active{background:var(--accent);color:var(--bg);border-color:var(--accent);}
+        .tag:active{transform:scale(.95);}
+        .stats{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin:16px 0;}
+        .stat-card{background:var(--surface);border:2px solid var(--border);border-radius:14px;padding:14px 12px;text-align:center;}
+        .stat-card .v{font-size:22px;font-weight:800;}
+        .stat-card .l{font-size:12px;color:var(--text2);margin-top:2px;}
+        .book-list{display:flex;flex-direction:column;gap:12px;}
+        .book-card{background:var(--surface);border:2px solid var(--border);border-radius:16px;padding:18px;cursor:pointer;transition:all .2s;display:flex;flex-direction:column;gap:10px;}
+        .book-card:active{border-color:var(--accent);background:var(--hover);}
+        .book-title{font-size:18px;font-weight:700;display:flex;align-items:center;gap:8px;word-break:break-all;}
+        .book-meta{font-size:13px;color:var(--text2);display:flex;gap:12px;flex-wrap:wrap;align-items:center;}
+        .book-cat{font-size:11px;font-weight:700;padding:3px 10px;border-radius:12px;background:var(--tag-bg);color:var(--tag-text);}
+        .pbar{height:6px;background:var(--border);border-radius:3px;overflow:hidden;}
+        .pfill{height:100%;background:var(--accent);border-radius:3px;transition:width .3s;}
+        .modal-overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.5);z-index:300;align-items:center;justify-content:center;padding:20px;}
+        .modal-overlay.active{display:flex;}
+        .modal-box{background:var(--surface);border-radius:20px;padding:24px;width:100%;max-width:500px;display:flex;flex-direction:column;gap:16px;}
+        .modal-box h2{font-size:20px;font-weight:700;}
+        .modal-box textarea{width:100%;height:200px;border:2px solid var(--border);border-radius:14px;padding:14px;font-size:15px;background:var(--surface);color:var(--text);font-family:inherit;resize:vertical;}
+        .modal-box input{width:100%;padding:12px 16px;border:2px solid var(--border);border-radius:12px;font-size:15px;background:var(--surface);color:var(--text);font-family:inherit;}
+        .modal-btns{display:flex;gap:10px;}
+        .modal-btns .btn{flex:1;}
+        .reader-overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:var(--bg);z-index:100;flex-direction:column;}
+        .reader-overlay.active{display:flex;}
+        .reader-top{display:flex;justify-content:space-between;align-items:center;padding:10px 12px;border-bottom:2px solid var(--border);background:var(--bg);gap:6px;flex-wrap:wrap;}
+        .reader-content{flex:1;overflow-y:auto;padding:20px 16px;font-size:18px;line-height:1.8;white-space:pre-wrap;word-break:break-all;-webkit-overflow-scrolling:touch;-webkit-user-select:text;user-select:text;}
+        .reader-bottom{display:flex;justify-content:space-around;padding:10px 12px;border-top:2px solid var(--border);background:var(--bg);gap:6px;}
+        .fix-bar{display:flex;gap:6px;padding:8px 12px;flex-wrap:wrap;align-items:center;background:#fff3cd;border-bottom:2px solid #ffc107;}
+        [data-theme="dark"] .fix-bar{background:#3d3200;}
+        .fix-bar .lbl{font-size:13px;font-weight:700;margin-right:4px;}
+        .fix-bar .btn-xs{background:#fff;border-color:#ffc107;}
+        [data-theme="dark"] .fix-bar .btn-xs{background:#4a4000;color:#fff;border-color:#ffc107;}
+        .fix-bar .btn-xs.active{background:#ffc107;color:#000;}
+        .search-box{width:100%;padding:12px 16px;border:2px solid var(--border);border-radius:12px;font-size:16px;background:var(--surface);color:var(--text);font-family:inherit;margin:8px 0;}
+        .search-results{max-height:200px;overflow-y:auto;background:var(--surface);border-radius:12px;border:2px solid var(--border);margin-top:6px;}
+        .search-result{padding:12px 16px;cursor:pointer;border-bottom:1px solid var(--border);font-size:14px;}
+        .search-result:last-child{border-bottom:none;}
+        .search-result:active{background:var(--hover);}
+        .toc-sidebar{position:fixed;right:-85%;top:0;width:85%;max-width:350px;height:100%;background:var(--surface);padding:24px 20px;overflow-y:auto;z-index:200;transition:right .3s;box-shadow:-4px 0 20px rgba(0,0,0,.15);}
+        .toc-sidebar.active{right:0;}
+        .toc-backdrop{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.5);z-index:199;}
+        .toc-backdrop.active{display:block;}
+        .toc-item{padding:14px 16px;cursor:pointer;border-radius:10px;margin:4px 0;font-size:16px;}
+        .toc-item:active{background:var(--hover);border:1px solid var(--accent);}
+        .toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:#333;color:#fff;padding:12px 24px;border-radius:30px;font-size:15px;font-weight:600;z-index:999;white-space:nowrap;pointer-events:none;}
+        .hidden{display:none!important;}
+        .file-input{display:none;}
+        .empty-state{text-align:center;padding:30px;color:var(--text2);}
+    </style>
+</head>
+<body>
+    <div id="mainPage">
+        <div class="header">
+            <h1>📚 我的書架</h1>
+            <div class="header-btns">
+                <button class="btn btn-sm" onclick="toggleTheme()">🌙</button>
+                <button class="btn btn-sm" onclick="exportAll()">💾</button>
+                <button class="btn btn-sm" onclick="importAll()">📥</button>
+            </div>
+        </div>
+
+        <div class="upload-row">
+            <button class="btn btn-accent" onclick="document.getElementById('fileInput').click()">📤 上傳TXT</button>
+            <button class="btn" onclick="showPasteModal()">📋 貼上文字</button>
+        </div>
+
+        <input type="search" class="search-bar" id="lobbySearch" placeholder="🔍 搜尋書名或分類..." oninput="refreshBooks()" autocomplete="off">
+
+        <div class="tag-row" id="tagRow">
+            <span class="label">🏷️</span>
+            <span class="tag active" data-cat="all" onclick="filterCat('all')">全部</span>
+        </div>
+
+        <div class="stats" id="statsContainer">
+            <div class="stat-card"><div class="v" id="statBooks">📖 0</div><div class="l">藏書數量</div></div>
+            <div class="stat-card"><div class="v" id="statTime">⏱️ 0分</div><div class="l">總閱讀時間</div></div>
+            <div class="stat-card"><div class="v" id="statToday">🎯 0分</div><div class="l">今日閱讀</div></div>
+            <div class="stat-card"><div class="v" id="statProgress">📊 0%</div><div class="l">平均進度</div></div>
+        </div>
+
+        <div class="book-list" id="bookList"><div class="empty-state">📭 尚未加入書籍</div></div>
+    </div>
+
+    <div class="modal-overlay" id="pasteModal">
+        <div class="modal-box">
+            <h2>📋 貼上文字</h2>
+            <input type="text" id="pasteTitle" placeholder="📖 書名（可選）">
+            <input type="text" id="pasteCat" placeholder="🏷️ 分類（可選）" list="catSuggest">
+            <datalist id="catSuggest"></datalist>
+            <textarea id="pasteContent" placeholder="喺度貼上你嘅小說文字..."></textarea>
+            <div class="modal-btns">
+                <button class="btn" onclick="closePasteModal()">取消</button>
+                <button class="btn btn-accent" onclick="savePastedText()">✅ 加入書架</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="reader-overlay" id="readerOverlay">
+        <div class="fix-bar hidden" id="fixBar">
+            <span class="lbl">🔧 編碼修復：</span>
+            <button class="btn btn-xs encoding-fix-btn active" data-enc="auto">🤖 自動</button>
+            <button class="btn btn-xs encoding-fix-btn" data-enc="gbk">🇨🇳 GBK</button>
+            <button class="btn btn-xs encoding-fix-btn" data-enc="gb18030">🇨🇳 GB18030</button>
+            <button class="btn btn-xs encoding-fix-btn" data-enc="big5">🇭🇰 Big5</button>
+            <button class="btn btn-xs encoding-fix-btn" data-enc="utf8">🌐 UTF-8</button>
+        </div>
+        <div class="reader-top">
+            <button class="btn btn-sm" onclick="closeReader()">← 返回</button>
+            <button class="btn btn-sm" onclick="changeFS(-2)">A-</button>
+            <span style="font-weight:700;min-width:30px;text-align:center;" id="fsLabel">18</span>
+            <button class="btn btn-sm" onclick="changeFS(2)">A+</button>
+            <button class="btn btn-sm" onclick="toggleSearch()">🔍</button>
+            <button class="btn btn-sm" onclick="toggleTOC()">📑</button>
+            <button class="btn btn-sm" onclick="toggleFixBar()">🔧</button>
+        </div>
+        <div id="searchArea" class="hidden" style="padding:0 16px;">
+            <input type="search" class="search-box" id="searchInput" placeholder="🔍 搜尋關鍵字..." oninput="doSearch()" autocomplete="off">
+            <div class="search-results" id="searchResults"></div>
+        </div>
+        <div class="reader-content" id="readerContent"></div>
+        <div class="reader-bottom">
+            <button class="btn btn-sm" onclick="changeFS(-2)">A-</button>
+            <button class="btn btn-sm" onclick="toggleSearch()">🔍</button>
+            <button class="btn btn-sm" onclick="toggleTOC()">📑</button>
+            <button class="btn btn-sm" onclick="toggleFixBar()">🔧</button>
+            <button class="btn btn-sm" onclick="changeFS(2)">A+</button>
+        </div>
+    </div>
+
+    <div class="toc-backdrop" id="tocBackdrop" onclick="toggleTOC()"></div>
+    <div class="toc-sidebar" id="tocSidebar">
+        <h3 style="margin-bottom:16px;font-size:18px;">📑 章節目錄</h3>
+        <div id="tocList"></div>
+    </div>
+
+    <input type="file" class="file-input" id="fileInput" accept=".txt,.text" onchange="handleFile(event)">
+
+    <script>
+        const DB='MyBookShelfV1';
+        let db,currentBook=null,readTimer=null,readStart=null,currentRaw=null;
+        let currentCat='all';
+        let allCategories=[];
+
+        function openDB(){
+            return new Promise((ok,no)=>{
+                const r=indexedDB.open(DB,1);
+                r.onerror=()=>no(r.error);
+                r.onsuccess=()=>{db=r.result;ok();};
+                r.onupgradeneeded=e=>{
+                    const d=e.target.result;
+                    if(!d.objectStoreNames.contains('books'))d.createObjectStore('books',{keyPath:'id'});
+                    if(!d.objectStoreNames.contains('settings'))d.createObjectStore('settings',{keyPath:'key'});
+                    if(!d.objectStoreNames.contains('rawFiles'))d.createObjectStore('rawFiles',{keyPath:'id'});
+                    if(!d.objectStoreNames.contains('categories'))d.createObjectStore('categories',{keyPath:'name'});
+                };
+            });
+        }
+
+        function dbOp(store,mode,fn){
+            return new Promise((ok,no)=>{
+                const tx=db.transaction(store,mode),s=tx.objectStore(store),req=fn(s);
+                if(req){req.onsuccess=()=>ok(req.result);req.onerror=()=>no(req.error);}
+                else{tx.oncomplete=()=>ok();tx.onerror=()=>no(tx.error);}
+            });
+        }
+
+        const saveBook=b=>dbOp('books','readwrite',s=>s.put(b));
+        const getBook=id=>dbOp('books','readonly',s=>s.get(id));
+        const getAllBooks=()=>dbOp('books','readonly',s=>s.getAll());
+        const removeBook=id=>dbOp('books','readwrite',s=>s.delete(id));
+        const saveRaw=(id,buf)=>dbOp('rawFiles','readwrite',s=>s.put({id,buffer:buf}));
+        const getRaw=id=>dbOp('rawFiles','readonly',s=>s.get(id));
+        const removeRaw=id=>dbOp('rawFiles','readwrite',s=>s.delete(id));
+        const saveSet=(k,v)=>dbOp('settings','readwrite',s=>s.put({key:k,value:v}));
+        const getSet=k=>dbOp('settings','readonly',s=>s.get(k)).then(r=>r?.value);
+        const saveCat=n=>dbOp('categories','readwrite',s=>s.put({name:n}));
+        const getAllCats=()=>dbOp('categories','readonly',s=>s.getAll()).then(r=>r.map(x=>x.name));
+
+        function tryDecode(buffer,enc){
+            const map={auto:['utf-8','gbk','gb18030','big5','big5-hkscs'],utf8:['utf-8'],gbk:['gbk','gb18030'],gb18030:['gb18030','gbk'],big5:['big5','big5-hkscs'],'big5-hkscs':['big5-hkscs','big5']};
+            const toTry=map[enc]||map.auto;
+            let best='',bestScore=Infinity;
+            for(const e of toTry){
+                try{
+                    const t=new TextDecoder(e).decode(buffer);
+                    const weird=(t.match(/[\ufffd\u0000-\u0008\u000b\u000c\u000e-\u001f]/g)||[]).length;
+                    const qm=(t.match(/\?/g)||[]).length;
+                    const score=(weird*10+qm)/Math.max(t.length,1);
+                    if(score<bestScore&&t.trim().length>0){bestScore=score;best=t;}
+                }catch(x){}
+            }
+            if(bestScore>0.5||!best){
+                try{best=new TextDecoder('gbk').decode(buffer);}catch(x){}
+                if(!best)best=new TextDecoder('utf-8').decode(buffer);
+            }
+            return best;
+        }
+
+        async function addBook(text,title,cat,buffer){
+            const book={
+                id:Date.now().toString(),
+                title:title||'未命名',
+                content:text,
+                category:cat||'',
+                progress:0,
+                addedDate:new Date().toISOString(),
+                readTime:0,todayReadTime:0,lastReadDate:null,
+                fontSize:18,encoding:'auto'
+            };
+            await saveBook(book);
+            if(buffer)await saveRaw(book.id,buffer);
+            if(cat){await saveCat(cat);await loadCategories();}
+            toast('✅ 已加入書架！');
+            refreshBooks();
+            updateStats();
+        }
+
+        async function handleFile(e){
+            const f=e.target.files[0];if(!f)return;
+            toast('⏳ 處理中...');
+            try{
+                const buf=await f.arrayBuffer(),text=tryDecode(buf,'auto');
+                const cat=prompt('🏷️ 分類（留空跳過）：')||'';
+                await addBook(text,f.name.replace(/\.(txt|text)$/i,''),cat,buf);
+            }catch(x){toast('❌ 讀取失敗');}
+            e.target.value='';
+        }
+
+        function showPasteModal(){
+            document.getElementById('pasteModal').classList.add('active');
+            document.getElementById('pasteContent').focus();
+            updateCatSuggest();
+        }
+        function closePasteModal(){
+            document.getElementById('pasteModal').classList.remove('active');
+            document.getElementById('pasteContent').value='';
+            document.getElementById('pasteTitle').value='';
+            document.getElementById('pasteCat').value='';
+        }
+        async function savePastedText(){
+            const text=document.getElementById('pasteContent').value.trim();
+            if(!text){toast('❌ 請貼上文字');return;}
+            const title=document.getElementById('pasteTitle').value.trim()||'未命名';
+            const cat=document.getElementById('pasteCat').value.trim();
+            await addBook(text,title,cat,null);
+            closePasteModal();
+        }
+
+        async function loadCategories(){
+            const cats=await getAllCats();
+            allCategories=cats;
+            const tagRow=document.getElementById('tagRow');
+            let html='<span class="label">🏷️</span><span class="tag active" data-cat="all" onclick="filterCat(\'all\')">全部</span>';
+            for(const c of cats){
+                html+=`<span class="tag" data-cat="${escAttr(c)}" onclick="filterCat('${escAttr(c)}')">${esc(c)}</span>`;
+            }
+            tagRow.innerHTML=html;
+            updateCatSuggest();
+        }
+
+        function updateCatSuggest(){
+            const dl=document.getElementById('catSuggest');
+            dl.innerHTML=allCategories.map(c=>`<option value="${escAttr(c)}">`).join('');
+        }
+
+        function filterCat(cat){
+            currentCat=cat;
+            document.querySelectorAll('#tagRow .tag').forEach(t=>t.classList.remove('active'));
+            const activeTag=document.querySelector(`#tagRow .tag[data-cat="${escAttr(cat)}"]`);
+            if(activeTag)activeTag.classList.add('active');
+            refreshBooks();
+        }
+
+        async function refreshBooks(){
+            const books=await getAllBooks();
+            const q=(document.getElementById('lobbySearch').value||'').toLowerCase();
+            let filtered=books;
+            if(currentCat!=='all')filtered=filtered.filter(b=>(b.category||'')===currentCat);
+            if(q)filtered=filtered.filter(b=>b.title.toLowerCase().includes(q)||(b.category||'').toLowerCase().includes(q));
+            const c=document.getElementById('bookList');
+            if(!filtered.length){c.innerHTML='<div class="empty-state">📭 冇相關書籍</div>';return;}
+            c.innerHTML=filtered.map(b=>{
+                const t=b.content?.length||1,p=((b.progress||0)/t*100).toFixed(1);
+                const catTag=b.category?`<span class="book-cat">🏷️ ${esc(b.category)}</span>`:'';
+                return`<div class="book-card" onclick="openBook('${b.id}')"><div class="book-title">📖 ${esc(b.title)}</div><div class="book-meta">${catTag}<span>📅 ${new Date(b.addedDate).toLocaleDateString('zh-HK')}</span><span>⏱️ ${b.readTime||0} 分鐘</span><span>📊 ${p}%</span></div><div class="pbar"><div class="pfill" style="width:${p}%"></div></div><div style="display:flex;gap:8px;"><button class="btn btn-xs" onclick="event.stopPropagation();delBook('${b.id}')">🗑️</button><button class="btn btn-xs" onclick="event.stopPropagation();renBook('${b.id}')">✏️</button><button class="btn btn-xs" onclick="event.stopPropagation();editCat('${b.id}')">🏷️</button></div></div>`;
+            }).join('');
+        }
+
+        function esc(s){const d=document.createElement('div');d.textContent=s;return d.innerHTML;}
+        function escAttr(s){return s.replace(/'/g,"\\'").replace(/"/g,'&quot;');}
+
+        async function updateStats(){
+            const books=await getAllBooks();
+            let tt=0,td=0,tp=0;const today=new Date().toDateString();
+            books.forEach(b=>{tt+=b.readTime||0;tp+=b.content?((b.progress||0)/b.content.length*100):0;if(b.lastReadDate&&new Date(b.lastReadDate).toDateString()===today)td+=b.todayReadTime||0;});
+            document.getElementById('statBooks').textContent=`📖 ${books.length}`;
+            document.getElementById('statTime').textContent=`⏱️ ${tt}分`;
+            document.getElementById('statToday').textContent=`🎯 ${td}分`;
+            document.getElementById('statProgress').textContent=`📊 ${books.length?(tp/books.length).toFixed(1):0}%`;
+        }
+
+        async function delBook(id){if(!confirm('🗑️ 確定刪除？'))return;await removeBook(id);await removeRaw(id);toast('🗑️ 已刪除');refreshBooks();updateStats();}
+        async function renBook(id){const b=await getBook(id);const n=prompt('✏️ 新書名：',b.title);if(n&&n.trim()){b.title=n.trim();await saveBook(b);refreshBooks();toast('✏️ 已改名');}}
+        async function editCat(id){const b=await getBook(id);const n=prompt('🏷️ 分類（留空=清除）：',b.category||'');if(n!==null){b.category=n.trim();await saveBook(b);if(b.category){await saveCat(b.category);await loadCategories();}refreshBooks();toast('🏷️ 已更新');}}
+
+        async function openBook(id){
+            const b=await getBook(id);if(!b)return;
+            currentBook=b;
+            document.getElementById('mainPage').classList.add('hidden');
+            document.getElementById('readerOverlay').classList.add('active');
+            document.getElementById('fixBar').classList.add('hidden');
+            updateContent(b.content,b.fontSize);
+            if(b.progress>0&&b.content){const el=document.getElementById('readerContent');setTimeout(()=>{el.scrollTop=el.scrollHeight*(b.progress/b.content.length);},100);}
+            document.getElementById('searchArea').classList.add('hidden');
+            document.getElementById('searchResults').innerHTML='';
+            document.getElementById('tocSidebar').classList.remove('active');
+            document.getElementById('tocBackdrop').classList.remove('active');
+            const raw=await getRaw(b.id);currentRaw=raw?.buffer||null;
+            readStart=Date.now();if(readTimer)clearInterval(readTimer);readTimer=setInterval(saveProgress,5000);
+            updateTOC(b);
+        }
+
+        function updateContent(text,fs){const el=document.getElementById('readerContent');el.style.fontSize=(fs||18)+'px';el.textContent=text;document.getElementById('fsLabel').textContent=fs||18;}
+
+        function closeReader(){
+            if(readTimer)clearInterval(readTimer);saveProgress();
+            document.getElementById('readerOverlay').classList.remove('active');
+            document.getElementById('mainPage').classList.remove('hidden');
+            document.getElementById('tocSidebar').classList.remove('active');
+            document.getElementById('tocBackdrop').classList.remove('active');
+            document.getElementById('fixBar').classList.add('hidden');
+            currentBook=null;currentRaw=null;refreshBooks();updateStats();
+        }
+
+        async function saveProgress(){
+            if(!currentBook||!readStart)return;
+            const b=await getBook(currentBook.id);if(!b)return;
+            const el=document.getElementById('readerContent');
+            if(el&&b.content)b.progress=Math.floor((el.scrollTop/el.scrollHeight)*b.content.length);
+            const elapsed=Math.floor((Date.now()-readStart)/60000);
+            if(elapsed>0){b.readTime=(b.readTime||0)+elapsed;const today=new Date().toDateString();const last=b.lastReadDate?new Date(b.lastReadDate).toDateString():null;b.todayReadTime=(last===today?(b.todayReadTime||0):0)+elapsed;b.lastReadDate=new Date().toISOString();readStart=Date.now();}
+            await saveBook(b);currentBook=b;
+        }
+
+        function changeFS(d){if(!currentBook)return;currentBook.fontSize=Math.max(12,Math.min(36,(currentBook.fontSize||18)+d));document.getElementById('readerContent').style.fontSize=currentBook.fontSize+'px';document.getElementById('fsLabel').textContent=currentBook.fontSize;}
+
+        function toggleFixBar(){const bar=document.getElementById('fixBar');bar.classList.toggle('hidden');if(!bar.classList.contains('hidden'))toast('🔧 揀一個編碼重新解碼');}
+
+        async function reDecode(enc){
+            if(!currentBook||!currentRaw){toast('❌ 只支援上傳嘅TXT檔案');return;}
+            document.querySelectorAll('.encoding-fix-btn').forEach(b=>b.classList.remove('active'));
+            const ab=document.querySelector(`.encoding-fix-btn[data-enc="${enc}"]`);if(ab)ab.classList.add('active');
+            const newText=tryDecode(currentRaw,enc);
+            updateContent(newText,currentBook.fontSize);
+            currentBook.content=newText;currentBook.encoding=enc;await saveBook(currentBook);
+            updateTOC(currentBook);document.getElementById('readerContent').scrollTop=0;
+            toast('✅ 已用 '+enc.toUpperCase()+' 重新解碼！');
+        }
+
+        document.addEventListener('click',e=>{if(e.target.classList.contains('encoding-fix-btn'))reDecode(e.target.dataset.enc);});
+
+        function toggleSearch(){document.getElementById('searchArea').classList.toggle('hidden');if(!document.getElementById('searchArea').classList.contains('hidden'))document.getElementById('searchInput').focus();}
+
+        function doSearch(){
+            if(!currentBook)return;
+            const q=document.getElementById('searchInput').value.toLowerCase(),rd=document.getElementById('searchResults');
+            if(!q){rd.innerHTML='';return;}
+            const c=currentBook.content.toLowerCase(),res=[];
+            let pos=c.indexOf(q),cnt=0;
+            while(pos!==-1&&cnt<20){const s=Math.max(0,pos-25),e=Math.min(c.length,pos+q.length+25);const ex=(s>0?'...':'')+currentBook.content.substring(s,e).replace(/\n/g,' ')+(e<c.length?'...':'');const re=new RegExp(q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'),'gi');res.push({pos,excerpt:ex.replace(re,m=>`<b style="background:#ffc107;color:#000;">${m}</b>`)});pos=c.indexOf(q,pos+1);cnt++;}
+            rd.innerHTML=res.length?res.map(r=>`<div class="search-result" onclick="jumpTo(${r.pos})">📍 ${r.excerpt}</div>`).join(''):'<div style="padding:14px;color:var(--text2);">找不到結果</div>';
+        }
+
+        function jumpTo(pos){
+            if(!currentBook)return;
+            const el=document.getElementById('readerContent');
+            el.scrollTop=(pos/currentBook.content.length)*el.scrollHeight;
+            document.getElementById('searchArea').classList.add('hidden');toast('📍 已跳轉');
+        }
+
+        function toggleTOC(){document.getElementById('tocSidebar').classList.toggle('active');document.getElementById('tocBackdrop').classList.toggle('active');}
+
+        function updateTOC(b){
+            const tl=document.getElementById('tocList');
+            const patterns=[/第[一二三四五六七八九十百千\d]+[章节回]/g,/第[一二三四五六七八九十百千\d]+[章節回]/g,/Chapter\s+\d+/gi,/^\d+[\.、\s]+.+/gm];
+            let ch=[];
+            for(const p of patterns){const m=b.content.match(p);if(m)ch=ch.concat(m);}
+            ch=[...new Set(ch)];
+            if(!ch.length){tl.innerHTML='<div style="color:var(--text2);">📭 未偵測到章節</div>';return;}
+            tl.innerHTML=ch.slice(0,100).map(c=>{const i=b.content.indexOf(c);return`<div class="toc-item" onclick="jumpTo(${i});toggleTOC();">${esc(c)}</div>`;}).join('');
+        }
+
+        async function toggleTheme(){
+            const isDark=document.documentElement.getAttribute('data-theme')==='dark';
+            document.documentElement.setAttribute('data-theme',isDark?'':'dark');
+            await saveSet('theme',isDark?'light':'dark');toast(isDark?'☀️ 日間模式':'🌙 夜間模式');
+        }
+
+        async function exportAll(){
+            const books=await getAllBooks();
+            const data={books,exportDate:new Date().toISOString(),version:1};
+            const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+            const url=URL.createObjectURL(blob);
+            const a=document.createElement('a');a.href=url;a.download=`bookshelf-${new Date().toISOString().split('T')[0]}.json`;a.click();
+            URL.revokeObjectURL(url);toast('💾 備份已下載');
+        }
+
+        function importAll(){
+            const inp=document.createElement('input');inp.type='file';inp.accept='.json';
+            inp.onchange=async e=>{
+                try{
+                    const t=await e.target.files[0].text(),data=JSON.parse(t);
+                    if(!data.books)throw new Error('格式錯誤');
+                    if(!confirm(`📥 匯入 ${data.books.length} 本書？`))return;
+                    const tx=db.transaction('books','readwrite'),store=tx.objectStore('books');
+                    for(const b of data.books){if(!b.category)b.category='';await store.put(b);}
+                    await new Promise(r=>{tx.oncomplete=r;});
+                    toast('✅ 匯入完成！');refreshBooks();updateStats();loadCategories();
+                }catch(x){toast('❌ 匯入失敗');}
+            };inp.click();
+        }
+
+        function toast(msg){
+            const old=document.querySelector('.toast');if(old)old.remove();
+            const t=document.createElement('div');t.className='toast';t.textContent=msg;
+            document.body.appendChild(t);setTimeout(()=>t.remove(),1800);
+        }
+
+        document.addEventListener('keydown',e=>{if(e.key==='Escape'&&currentBook)closeReader();});
+
+        (async function(){
+            await openDB();
+            const theme=await getSet('theme');
+            if(theme==='dark')document.documentElement.setAttribute('data-theme','dark');
+            await loadCategories();
+            refreshBooks();
+            updateStats();
+        })();
+    </script>
+</body>
+</html>
