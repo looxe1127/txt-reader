@@ -61,6 +61,7 @@
         .upload-row{display:flex;gap:10px;margin:16px 0;flex-wrap:wrap;}
         .upload-row .btn{flex:1;min-width:140px;}
         .search-bar{width:100%;padding:14px 18px;border:2px solid var(--border);border-radius:16px;font-size:16px;background:var(--surface);color:var(--text);font-family:inherit;margin:12px 0;}
+        .tool-row{display:flex;gap:8px;align-items:center;margin:12px 0;flex-wrap:wrap;}
         .tag-row{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0;align-items:center;}
         .tag-row .label{font-size:14px;font-weight:700;color:var(--text2);}
         .tag{padding:8px 14px;border-radius:20px;font-size:13px;font-weight:600;background:var(--tag-bg);color:var(--tag-text);border:2px solid transparent;cursor:pointer;transition:all .2s;}
@@ -70,22 +71,53 @@
         .stat-card{background:var(--surface);border:2px solid var(--border);border-radius:14px;padding:14px 12px;text-align:center;}
         .stat-card .v{font-size:22px;font-weight:800;}
         .stat-card .l{font-size:12px;color:var(--text2);margin-top:2px;}
-        .book-list{display:flex;flex-direction:column;gap:12px;}
-        .book-card{background:var(--surface);border:2px solid var(--border);border-radius:16px;padding:18px;cursor:pointer;transition:all .2s;display:flex;flex-direction:column;gap:10px;}
+
+        /* 書架 - 網格模式 */
+        .book-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;}
+        .book-grid .book-card{padding:14px;gap:8px;}
+        .book-grid .book-title{font-size:15px;}
+        .book-grid .book-meta{font-size:11px;gap:6px;}
+        .book-grid .book-cat{font-size:10px;padding:2px 8px;}
+
+        /* 書架 - 列表模式（純文字） */
+        .book-list-mode{display:flex;flex-direction:column;gap:4px;}
+        .book-list-mode .book-row{
+            display:flex;justify-content:space-between;align-items:center;
+            padding:12px 16px;cursor:pointer;border-radius:10px;
+            border-bottom:1px solid var(--border);transition:background .2s;
+        }
+        .book-list-mode .book-row:active{background:var(--hover);}
+        .book-list-mode .book-row .title{font-size:16px;font-weight:600;}
+        .book-list-mode .book-row .meta{font-size:12px;color:var(--text2);}
+
+        .book-card{
+            background:var(--surface);border:2px solid var(--border);
+            border-radius:16px;padding:18px;cursor:pointer;
+            transition:all .2s;display:flex;flex-direction:column;gap:10px;
+        }
         .book-card:active{border-color:var(--accent);background:var(--hover);}
         .book-title{font-size:18px;font-weight:700;display:flex;align-items:center;gap:8px;word-break:break-all;}
         .book-meta{font-size:13px;color:var(--text2);display:flex;gap:12px;flex-wrap:wrap;align-items:center;}
         .book-cat{font-size:11px;font-weight:700;padding:3px 10px;border-radius:12px;background:var(--tag-bg);color:var(--tag-text);}
+        .book-tags{display:flex;gap:4px;flex-wrap:wrap;}
+        .book-tags .book-cat{margin:0;}
         .pbar{height:6px;background:var(--border);border-radius:3px;overflow:hidden;}
         .pfill{height:100%;background:var(--accent);border-radius:3px;transition:width .3s;}
+
+        /* Modal */
         .modal-overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.5);z-index:300;align-items:center;justify-content:center;padding:20px;}
         .modal-overlay.active{display:flex;}
-        .modal-box{background:var(--surface);border-radius:20px;padding:24px;width:100%;max-width:500px;display:flex;flex-direction:column;gap:16px;}
+        .modal-box{background:var(--surface);border-radius:20px;padding:24px;width:100%;max-width:500px;display:flex;flex-direction:column;gap:16px;max-height:90vh;overflow-y:auto;}
         .modal-box h2{font-size:20px;font-weight:700;}
-        .modal-box textarea{width:100%;height:200px;border:2px solid var(--border);border-radius:14px;padding:14px;font-size:15px;background:var(--surface);color:var(--text);font-family:inherit;resize:vertical;}
+        .modal-box textarea{width:100%;height:150px;border:2px solid var(--border);border-radius:14px;padding:14px;font-size:15px;background:var(--surface);color:var(--text);font-family:inherit;resize:vertical;}
         .modal-box input{width:100%;padding:12px 16px;border:2px solid var(--border);border-radius:12px;font-size:15px;background:var(--surface);color:var(--text);font-family:inherit;}
         .modal-btns{display:flex;gap:10px;}
         .modal-btns .btn{flex:1;}
+        .dup-warning{background:#fff3cd;padding:12px 16px;border-radius:12px;font-size:14px;font-weight:600;color:#856404;display:none;}
+        [data-theme="dark"] .dup-warning{background:#3d3200;color:#ffc107;}
+        .dup-warning.show{display:block;}
+
+        /* Reader */
         .reader-overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:var(--bg);z-index:100;flex-direction:column;}
         .reader-overlay.active{display:flex;}
         .reader-top{display:flex;justify-content:space-between;align-items:center;padding:10px 12px;border-bottom:2px solid var(--border);background:var(--bg);gap:6px;flex-wrap:wrap;}
@@ -111,7 +143,12 @@
         .toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:#333;color:#fff;padding:12px 24px;border-radius:30px;font-size:15px;font-weight:600;z-index:999;white-space:nowrap;pointer-events:none;}
         .hidden{display:none!important;}
         .file-input{display:none;}
-        .empty-state{text-align:center;padding:30px;color:var(--text2);}
+        .empty-state{text-align:center;padding:30px;color:var(--text2);grid-column:1/-1;}
+
+        /* 視圖切換掣 */
+        .view-toggle{display:flex;gap:4px;background:var(--surface);border:2px solid var(--border);border-radius:12px;padding:4px;}
+        .view-toggle .vt-btn{padding:8px 12px;border-radius:10px;border:none;background:transparent;color:var(--text);font-size:16px;cursor:pointer;font-family:inherit;}
+        .view-toggle .vt-btn.active{background:var(--accent);color:var(--bg);}
     </style>
 </head>
 <body>
@@ -132,6 +169,14 @@
 
         <input type="search" class="search-bar" id="lobbySearch" placeholder="🔍 搜尋書名或分類..." oninput="refreshBooks()" autocomplete="off">
 
+        <div class="tool-row">
+            <div class="view-toggle" id="viewToggle">
+                <button class="vt-btn active" data-view="grid" onclick="switchView('grid')">📱 網格</button>
+                <button class="vt-btn" data-view="list" onclick="switchView('list')">📋 列表</button>
+            </div>
+            <span style="font-size:13px;color:var(--text2);" id="bookCount"></span>
+        </div>
+
         <div class="tag-row" id="tagRow">
             <span class="label">🏷️</span>
             <span class="tag active" data-cat="all" onclick="filterCat('all')">全部</span>
@@ -144,16 +189,18 @@
             <div class="stat-card"><div class="v" id="statProgress">📊 0%</div><div class="l">平均進度</div></div>
         </div>
 
-        <div class="book-list" id="bookList"><div class="empty-state">📭 尚未加入書籍</div></div>
+        <div id="bookContainer"><div class="empty-state">📭 尚未加入書籍</div></div>
     </div>
 
+    <!-- 貼上文字彈窗 -->
     <div class="modal-overlay" id="pasteModal">
         <div class="modal-box">
             <h2>📋 貼上文字</h2>
+            <div class="dup-warning" id="dupWarning">⚠️ 偵測到重複內容！可能你已經加過呢本書。</div>
             <input type="text" id="pasteTitle" placeholder="📖 書名（可選）">
-            <input type="text" id="pasteCat" placeholder="🏷️ 分類（可選）" list="catSuggest">
+            <input type="text" id="pasteCat" placeholder="🏷️ 標籤（用逗號分隔，例如：玄幻,連載中）" list="catSuggest">
             <datalist id="catSuggest"></datalist>
-            <textarea id="pasteContent" placeholder="喺度貼上你嘅小說文字..."></textarea>
+            <textarea id="pasteContent" placeholder="喺度貼上你嘅小說文字..." oninput="checkDuplicate()"></textarea>
             <div class="modal-btns">
                 <button class="btn" onclick="closePasteModal()">取消</button>
                 <button class="btn btn-accent" onclick="savePastedText()">✅ 加入書架</button>
@@ -161,6 +208,7 @@
         </div>
     </div>
 
+    <!-- 閱讀器 -->
     <div class="reader-overlay" id="readerOverlay">
         <div class="fix-bar hidden" id="fixBar">
             <span class="lbl">🔧 編碼修復：</span>
@@ -202,10 +250,11 @@
     <input type="file" class="file-input" id="fileInput" accept=".txt,.text" onchange="handleFile(event)">
 
     <script>
-        const DB='MyBookShelfV1';
+        const DB='MyBookShelfV2';
         let db,currentBook=null,readTimer=null,readStart=null,currentRaw=null;
         let currentCat='all';
         let allCategories=[];
+        let currentView='grid';
 
         function openDB(){
             return new Promise((ok,no)=>{
@@ -255,19 +304,36 @@
                     if(score<bestScore&&t.trim().length>0){bestScore=score;best=t;}
                 }catch(x){}
             }
-            if(bestScore>0.5||!best){
-                try{best=new TextDecoder('gbk').decode(buffer);}catch(x){}
-                if(!best)best=new TextDecoder('utf-8').decode(buffer);
-            }
+            if(bestScore>0.5||!best){try{best=new TextDecoder('gbk').decode(buffer);}catch(x){};if(!best)best=new TextDecoder('utf-8').decode(buffer);}
             return best;
         }
 
-        async function addBook(text,title,cat,buffer){
+        // 重複偵測
+        function checkDuplicate(){
+            const text=document.getElementById('pasteContent').value.trim();
+            const warning=document.getElementById('dupWarning');
+            if(!text){warning.classList.remove('show');return;}
+            getAllBooks().then(books=>{
+                const dup=books.find(b=>b.content&&b.content.trim().substring(0,200)===text.substring(0,200));
+                if(dup)warning.classList.add('show');
+                else warning.classList.remove('show');
+            });
+        }
+
+        async function addBook(text,title,cats,buffer){
+            // 檢查重複
+            const books=await getAllBooks();
+            const dup=books.find(b=>b.content&&b.content.trim().substring(0,200)===text.trim().substring(0,200));
+            if(dup){
+                if(!confirm(`⚠️ 偵測到可能重複嘅書：「${dup.title}」\n\n確定要繼續加入嗎？`))return;
+            }
+
+            const tags=cats?cats.split(',').map(t=>t.trim()).filter(t=>t):[];
             const book={
                 id:Date.now().toString(),
                 title:title||'未命名',
                 content:text,
-                category:cat||'',
+                tags:tags,
                 progress:0,
                 addedDate:new Date().toISOString(),
                 readTime:0,todayReadTime:0,lastReadDate:null,
@@ -275,7 +341,8 @@
             };
             await saveBook(book);
             if(buffer)await saveRaw(book.id,buffer);
-            if(cat){await saveCat(cat);await loadCategories();}
+            for(const t of tags){if(t){await saveCat(t);}}
+            await loadCategories();
             toast('✅ 已加入書架！');
             refreshBooks();
             updateStats();
@@ -286,8 +353,8 @@
             toast('⏳ 處理中...');
             try{
                 const buf=await f.arrayBuffer(),text=tryDecode(buf,'auto');
-                const cat=prompt('🏷️ 分類（留空跳過）：')||'';
-                await addBook(text,f.name.replace(/\.(txt|text)$/i,''),cat,buf);
+                const cats=prompt('🏷️ 標籤（用逗號分隔，例如：玄幻,連載中）：')||'';
+                await addBook(text,f.name.replace(/\.(txt|text)$/i,''),cats,buf);
             }catch(x){toast('❌ 讀取失敗');}
             e.target.value='';
         }
@@ -295,6 +362,7 @@
         function showPasteModal(){
             document.getElementById('pasteModal').classList.add('active');
             document.getElementById('pasteContent').focus();
+            document.getElementById('dupWarning').classList.remove('show');
             updateCatSuggest();
         }
         function closePasteModal(){
@@ -302,13 +370,14 @@
             document.getElementById('pasteContent').value='';
             document.getElementById('pasteTitle').value='';
             document.getElementById('pasteCat').value='';
+            document.getElementById('dupWarning').classList.remove('show');
         }
         async function savePastedText(){
             const text=document.getElementById('pasteContent').value.trim();
             if(!text){toast('❌ 請貼上文字');return;}
             const title=document.getElementById('pasteTitle').value.trim()||'未命名';
-            const cat=document.getElementById('pasteCat').value.trim();
-            await addBook(text,title,cat,null);
+            const cats=document.getElementById('pasteCat').value.trim();
+            await addBook(text,title,cats,null);
             closePasteModal();
         }
 
@@ -337,19 +406,39 @@
             refreshBooks();
         }
 
+        function switchView(view){
+            currentView=view;
+            document.querySelectorAll('#viewToggle .vt-btn').forEach(b=>b.classList.remove('active'));
+            document.querySelector(`#viewToggle .vt-btn[data-view="${view}"]`).classList.add('active');
+            refreshBooks();
+        }
+
         async function refreshBooks(){
             const books=await getAllBooks();
             const q=(document.getElementById('lobbySearch').value||'').toLowerCase();
             let filtered=books;
-            if(currentCat!=='all')filtered=filtered.filter(b=>(b.category||'')===currentCat);
-            if(q)filtered=filtered.filter(b=>b.title.toLowerCase().includes(q)||(b.category||'').toLowerCase().includes(q));
-            const c=document.getElementById('bookList');
+            if(currentCat!=='all')filtered=filtered.filter(b=>(b.tags||[]).includes(currentCat));
+            if(q)filtered=filtered.filter(b=>b.title.toLowerCase().includes(q)||(b.tags||[]).some(t=>t.toLowerCase().includes(q)));
+            
+            const c=document.getElementById('bookContainer');
+            document.getElementById('bookCount').textContent=`共 ${filtered.length} 本書`;
+            
             if(!filtered.length){c.innerHTML='<div class="empty-state">📭 冇相關書籍</div>';return;}
-            c.innerHTML=filtered.map(b=>{
-                const t=b.content?.length||1,p=((b.progress||0)/t*100).toFixed(1);
-                const catTag=b.category?`<span class="book-cat">🏷️ ${esc(b.category)}</span>`:'';
-                return`<div class="book-card" onclick="openBook('${b.id}')"><div class="book-title">📖 ${esc(b.title)}</div><div class="book-meta">${catTag}<span>📅 ${new Date(b.addedDate).toLocaleDateString('zh-HK')}</span><span>⏱️ ${b.readTime||0} 分鐘</span><span>📊 ${p}%</span></div><div class="pbar"><div class="pfill" style="width:${p}%"></div></div><div style="display:flex;gap:8px;"><button class="btn btn-xs" onclick="event.stopPropagation();delBook('${b.id}')">🗑️</button><button class="btn btn-xs" onclick="event.stopPropagation();renBook('${b.id}')">✏️</button><button class="btn btn-xs" onclick="event.stopPropagation();editCat('${b.id}')">🏷️</button></div></div>`;
-            }).join('');
+
+            if(currentView==='list'){
+                c.className='book-list-mode';
+                c.innerHTML=filtered.map(b=>{
+                    const p=b.content?((b.progress||0)/b.content.length*100).toFixed(1):0;
+                    return`<div class="book-row" onclick="openBook('${b.id}')"><span class="title">📖 ${esc(b.title)}</span><span class="meta">📊 ${p}% | ⏱️ ${b.readTime||0}分</span></div>`;
+                }).join('');
+            }else{
+                c.className='book-grid';
+                c.innerHTML=filtered.map(b=>{
+                    const t=b.content?.length||1,p=((b.progress||0)/t*100).toFixed(1);
+                    const tagsHtml=(b.tags||[]).map(tg=>`<span class="book-cat">${esc(tg)}</span>`).join('');
+                    return`<div class="book-card" onclick="openBook('${b.id}')"><div class="book-title">📖 ${esc(b.title)}</div>${tagsHtml?`<div class="book-tags">${tagsHtml}</div>`:''}<div class="book-meta"><span>📊 ${p}%</span><span>⏱️ ${b.readTime||0}分</span></div><div class="pbar"><div class="pfill" style="width:${p}%"></div></div><div style="display:flex;gap:6px;flex-wrap:wrap;"><button class="btn btn-xs" onclick="event.stopPropagation();delBook('${b.id}')">🗑️</button><button class="btn btn-xs" onclick="event.stopPropagation();renBook('${b.id}')">✏️</button><button class="btn btn-xs" onclick="event.stopPropagation();editTags('${b.id}')">🏷️</button></div></div>`;
+                }).join('');
+            }
         }
 
         function esc(s){const d=document.createElement('div');d.textContent=s;return d.innerHTML;}
@@ -365,9 +454,20 @@
             document.getElementById('statProgress').textContent=`📊 ${books.length?(tp/books.length).toFixed(1):0}%`;
         }
 
-        async function delBook(id){if(!confirm('🗑️ 確定刪除？'))return;await removeBook(id);await removeRaw(id);toast('🗑️ 已刪除');refreshBooks();updateStats();}
+        async function delBook(id){if(!confirm('🗑️ 確定刪除？'))return;await removeBook(id);await removeRaw(id);toast('🗑️ 已刪除');refreshBooks();updateStats();loadCategories();}
         async function renBook(id){const b=await getBook(id);const n=prompt('✏️ 新書名：',b.title);if(n&&n.trim()){b.title=n.trim();await saveBook(b);refreshBooks();toast('✏️ 已改名');}}
-        async function editCat(id){const b=await getBook(id);const n=prompt('🏷️ 分類（留空=清除）：',b.category||'');if(n!==null){b.category=n.trim();await saveBook(b);if(b.category){await saveCat(b.category);await loadCategories();}refreshBooks();toast('🏷️ 已更新');}}
+        async function editTags(id){
+            const b=await getBook(id);
+            const n=prompt('🏷️ 標籤（用逗號分隔，例如：玄幻,連載中）：',(b.tags||[]).join(','));
+            if(n!==null){
+                b.tags=n.split(',').map(t=>t.trim()).filter(t=>t);
+                await saveBook(b);
+                for(const t of b.tags){if(t)await saveCat(t);}
+                await loadCategories();
+                refreshBooks();
+                toast('🏷️ 已更新');
+            }
+        }
 
         async function openBook(id){
             const b=await getBook(id);if(!b)return;
@@ -415,7 +515,7 @@
         async function reDecode(enc){
             if(!currentBook||!currentRaw){toast('❌ 只支援上傳嘅TXT檔案');return;}
             document.querySelectorAll('.encoding-fix-btn').forEach(b=>b.classList.remove('active'));
-            const ab=document.querySelector(`.encoding-fix-btn[data-enc="${enc}"]`);if(ab)ab.classList.add('active');
+            document.querySelector(`.encoding-fix-btn[data-enc="${enc}"]`)?.classList.add('active');
             const newText=tryDecode(currentRaw,enc);
             updateContent(newText,currentBook.fontSize);
             currentBook.content=newText;currentBook.encoding=enc;await saveBook(currentBook);
@@ -439,8 +539,7 @@
 
         function jumpTo(pos){
             if(!currentBook)return;
-            const el=document.getElementById('readerContent');
-            el.scrollTop=(pos/currentBook.content.length)*el.scrollHeight;
+            document.getElementById('readerContent').scrollTop=(pos/currentBook.content.length)*document.getElementById('readerContent').scrollHeight;
             document.getElementById('searchArea').classList.add('hidden');toast('📍 已跳轉');
         }
 
@@ -464,11 +563,9 @@
 
         async function exportAll(){
             const books=await getAllBooks();
-            const data={books,exportDate:new Date().toISOString(),version:1};
-            const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
-            const url=URL.createObjectURL(blob);
-            const a=document.createElement('a');a.href=url;a.download=`bookshelf-${new Date().toISOString().split('T')[0]}.json`;a.click();
-            URL.revokeObjectURL(url);toast('💾 備份已下載');
+            const blob=new Blob([JSON.stringify({books,exportDate:new Date().toISOString(),version:2},null,2)],{type:'application/json'});
+            const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`bookshelf-${new Date().toISOString().split('T')[0]}.json`;a.click();
+            toast('💾 備份已下載');
         }
 
         function importAll(){
@@ -479,15 +576,20 @@
                     if(!data.books)throw new Error('格式錯誤');
                     if(!confirm(`📥 匯入 ${data.books.length} 本書？`))return;
                     const tx=db.transaction('books','readwrite'),store=tx.objectStore('books');
-                    for(const b of data.books){if(!b.category)b.category='';await store.put(b);}
+                    for(const b of data.books){
+                        if(!b.tags)b.tags=[];
+                        if(b.category&&!b.tags.includes(b.category))b.tags.push(b.category);
+                        delete b.category;
+                        await store.put(b);
+                    }
                     await new Promise(r=>{tx.oncomplete=r;});
                     toast('✅ 匯入完成！');refreshBooks();updateStats();loadCategories();
-                }catch(x){toast('❌ 匯入失敗');}
+                }catch(x){console.error(x);toast('❌ 匯入失敗');}
             };inp.click();
         }
 
         function toast(msg){
-            const old=document.querySelector('.toast');if(old)old.remove();
+            document.querySelectorAll('.toast').forEach(t=>t.remove());
             const t=document.createElement('div');t.className='toast';t.textContent=msg;
             document.body.appendChild(t);setTimeout(()=>t.remove(),1800);
         }
@@ -499,6 +601,17 @@
             const theme=await getSet('theme');
             if(theme==='dark')document.documentElement.setAttribute('data-theme','dark');
             await loadCategories();
+            // 遷移舊數據：將 category 轉為 tags
+            const books=await getAllBooks();
+            for(const b of books){
+                let changed=false;
+                if(!b.tags){b.tags=[];changed=true;}
+                if(b.category){
+                    if(!b.tags.includes(b.category)){b.tags.push(b.category);changed=true;}
+                    delete b.category;changed=true;
+                }
+                if(changed)await saveBook(b);
+            }
             refreshBooks();
             updateStats();
         })();
