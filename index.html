@@ -61,6 +61,724 @@
         .upload-row{display:flex;gap:10px;margin:16px 0;flex-wrap:wrap;}
         .upload-row .btn{flex:1;min-width:140px;}
         .search-bar{width:100%;padding:14px 18px;border:2px solid var(--border);border-radius:16px;font-size:16px;background:var(--surface);color:var(--text);font-family:inherit;margin:12px 0;}
+        .tool-row{display:flex;gap:8px;align-items:center;margin:12px 0;flex-wrap:wrap;justify-content:space-between;}
+        .tag-row{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0;align-items:center;}
+        .tag-row .label{font-size:14px;font-weight:700;color:var(--text2);}
+        .tag{padding:8px 14px;border-radius:20px;font-size:13px;font-weight:600;background:var(--tag-bg);color:var(--tag-text);border:2px solid transparent;cursor:pointer;transition:all .2s;}
+        .tag.active{background:var(--accent);color:var(--bg);border-color:var(--accent);}
+        .tag:active{transform:scale(.95);}
+        .stats{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin:16px 0;}
+        .stat-card{background:var(--surface);border:2px solid var(--border);border-radius:14px;padding:14px 12px;text-align:center;}
+        .stat-card .v{font-size:22px;font-weight:800;}
+        .stat-card .l{font-size:12px;color:var(--text2);margin-top:2px;}
+
+        .book-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;}
+        .book-grid .book-card{padding:14px;gap:8px;}
+        .book-grid .book-title{font-size:15px;}
+        .book-grid .book-meta{font-size:11px;gap:6px;}
+        .book-grid .book-cat{font-size:10px;padding:2px 8px;}
+
+        .book-list-mode{display:flex;flex-direction:column;gap:4px;}
+        .book-list-mode .book-row{
+            display:flex;justify-content:space-between;align-items:center;
+            padding:12px 16px;cursor:pointer;border-radius:10px;
+            border-bottom:1px solid var(--border);transition:background .2s;
+        }
+        .book-list-mode .book-row:active{background:var(--hover);}
+        .book-list-mode .book-row .title{font-size:16px;font-weight:600;}
+        .book-list-mode .book-row .meta{font-size:12px;color:var(--text2);}
+
+        .book-card{
+            background:var(--surface);border:2px solid var(--border);
+            border-radius:16px;padding:18px;cursor:pointer;
+            transition:all .2s;display:flex;flex-direction:column;gap:10px;
+        }
+        .book-card:active{border-color:var(--accent);background:var(--hover);}
+        .book-title{font-size:18px;font-weight:700;display:flex;align-items:center;gap:8px;word-break:break-all;}
+        .book-meta{font-size:13px;color:var(--text2);display:flex;gap:12px;flex-wrap:wrap;align-items:center;}
+        .book-cat{font-size:11px;font-weight:700;padding:3px 10px;border-radius:12px;background:var(--tag-bg);color:var(--tag-text);}
+        .book-tags{display:flex;gap:4px;flex-wrap:wrap;}
+        .pbar{height:6px;background:var(--border);border-radius:3px;overflow:hidden;}
+        .pfill{height:100%;background:var(--accent);border-radius:3px;transition:width .3s;}
+
+        .modal-overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.5);z-index:300;align-items:center;justify-content:center;padding:20px;}
+        .modal-overlay.active{display:flex;}
+        .modal-box{background:var(--surface);border-radius:20px;padding:24px;width:100%;max-width:500px;display:flex;flex-direction:column;gap:16px;max-height:90vh;overflow-y:auto;}
+        .modal-box h2{font-size:20px;font-weight:700;}
+        .modal-box textarea{width:100%;height:150px;border:2px solid var(--border);border-radius:14px;padding:14px;font-size:15px;background:var(--surface);color:var(--text);font-family:inherit;resize:vertical;}
+        .modal-box input{width:100%;padding:12px 16px;border:2px solid var(--border);border-radius:12px;font-size:15px;background:var(--surface);color:var(--text);font-family:inherit;}
+        .modal-btns{display:flex;gap:10px;}
+        .modal-btns .btn{flex:1;}
+        .dup-warning{background:#fff3cd;padding:12px 16px;border-radius:12px;font-size:14px;font-weight:600;color:#856404;display:none;}
+        [data-theme="dark"] .dup-warning{background:#3d3200;color:#ffc107;}
+        .dup-warning.show{display:block;}
+
+        .cat-list-item{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border);}
+        .cat-list-item .name{font-weight:600;}
+        .cat-list-item .actions{display:flex;gap:8px;}
+
+        .reader-overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:var(--bg);z-index:100;flex-direction:column;}
+        .reader-overlay.active{display:flex;}
+        .reader-top{display:flex;justify-content:space-between;align-items:center;padding:10px 12px;border-bottom:2px solid var(--border);background:var(--bg);gap:6px;flex-wrap:wrap;}
+        .reader-content{flex:1;overflow-y:auto;padding:20px 16px;font-size:18px;line-height:1.8;white-space:pre-wrap;word-break:break-all;-webkit-overflow-scrolling:touch;-webkit-user-select:text;user-select:text;}
+        .reader-bottom{display:flex;justify-content:space-around;padding:10px 12px;border-top:2px solid var(--border);background:var(--bg);gap:6px;}
+        .fix-bar{display:flex;gap:6px;padding:8px 12px;flex-wrap:wrap;align-items:center;background:#fff3cd;border-bottom:2px solid #ffc107;}
+        [data-theme="dark"] .fix-bar{background:#3d3200;}
+        .fix-bar .lbl{font-size:13px;font-weight:700;margin-right:4px;}
+        .fix-bar .btn-xs{background:#fff;border-color:#ffc107;}
+        [data-theme="dark"] .fix-bar .btn-xs{background:#4a4000;color:#fff;border-color:#ffc107;}
+        .fix-bar .btn-xs.active{background:#ffc107;color:#000;}
+        .search-box{width:100%;padding:12px 16px;border:2px solid var(--border);border-radius:12px;font-size:16px;background:var(--surface);color:var(--text);font-family:inherit;margin:8px 0;}
+        .search-results{max-height:200px;overflow-y:auto;background:var(--surface);border-radius:12px;border:2px solid var(--border);margin-top:6px;}
+        .search-result{padding:12px 16px;cursor:pointer;border-bottom:1px solid var(--border);font-size:14px;}
+        .search-result:last-child{border-bottom:none;}
+        .search-result:active{background:var(--hover);}
+        .toc-sidebar{position:fixed;right:-85%;top:0;width:85%;max-width:350px;height:100%;background:var(--surface);padding:24px 20px;overflow-y:auto;z-index:200;transition:right .3s;box-shadow:-4px 0 20px rgba(0,0,0,.15);}
+        .toc-sidebar.active{right:0;}
+        .toc-backdrop{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.5);z-index:199;}
+        .toc-backdrop.active{display:block;}
+        .toc-item{padding:14px 16px;cursor:pointer;border-radius:10px;margin:4px 0;font-size:16px;}
+        .toc-item:active{background:var(--hover);border:1px solid var(--accent);}
+        .toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:#333;color:#fff;padding:12px 24px;border-radius:30px;font-size:15px;font-weight:600;z-index:999;white-space:nowrap;pointer-events:none;}
+        .hidden{display:none!important;}
+        .file-input{display:none;}
+        .empty-state{text-align:center;padding:30px;color:var(--text2);grid-column:1/-1;}
+
+        .view-toggle{display:flex;gap:4px;background:var(--surface);border:2px solid var(--border);border-radius:12px;padding:4px;}
+        .view-toggle .vt-btn{padding:8px 12px;border-radius:10px;border:none;background:transparent;color:var(--text);font-size:16px;cursor:pointer;font-family:inherit;}
+        .view-toggle .vt-btn.active{background:var(--accent);color:var(--bg);}
+    </style>
+</head>
+<body>
+    <div id="mainPage">
+        <div class="header">
+            <h1>📚 我的書架</h1>
+            <div class="header-btns">
+                <button class="btn btn-sm" onclick="toggleTheme()">🌙</button>
+                <button class="btn btn-sm" onclick="exportAll()">💾</button>
+                <button class="btn btn-sm" onclick="importAll()">📥</button>
+            </div>
+        </div>
+
+        <div class="upload-row">
+            <button class="btn btn-accent" onclick="document.getElementById('fileInput').click()">📤 上傳TXT</button>
+            <button class="btn" onclick="showPasteModal()">📋 貼上文字</button>
+        </div>
+
+        <input type="search" class="search-bar" id="lobbySearch" placeholder="🔍 搜尋書名或標籤..." oninput="refreshBooks()" autocomplete="off">
+
+        <div class="tool-row">
+            <div class="view-toggle" id="viewToggle">
+                <button class="vt-btn active" data-view="grid" onclick="switchView('grid')">📱 網格</button>
+                <button class="vt-btn" data-view="list" onclick="switchView('list')">📋 列表</button>
+            </div>
+            <span style="font-size:13px;color:var(--text2);" id="bookCount"></span>
+        </div>
+
+        <div class="tag-row" id="tagRow">
+            <span class="label">🏷️</span>
+            <span class="tag active" data-cat="all" onclick="filterCat('all')">全部</span>
+            <button class="btn btn-xs" onclick="showCatManager()" style="margin-left:auto;">⚙️ 管理分類</button>
+        </div>
+
+        <div class="stats" id="statsContainer">
+            <div class="stat-card"><div class="v" id="statBooks">📖 0</div><div class="l">藏書數量</div></div>
+            <div class="stat-card"><div class="v" id="statTime">⏱️ 0分</div><div class="l">總閱讀時間</div></div>
+            <div class="stat-card"><div class="v" id="statToday">🎯 0分</div><div class="l">今日閱讀</div></div>
+            <div class="stat-card"><div class="v" id="statProgress">📊 0%</div><div class="l">平均進度</div></div>
+        </div>
+
+        <div id="bookContainer"><div class="empty-state">📭 尚未加入書籍</div></div>
+    </div>
+
+    <!-- 貼上文字彈窗 -->
+    <div class="modal-overlay" id="pasteModal">
+        <div class="modal-box">
+            <h2>📋 貼上文字</h2>
+            <div class="dup-warning" id="dupWarning"></div>
+            <input type="text" id="pasteTitle" placeholder="📖 書名（可選）">
+            <input type="text" id="pasteCat" placeholder="🏷️ 標籤（用逗號分隔，例如：玄幻,連載中）" list="catSuggest">
+            <datalist id="catSuggest"></datalist>
+            <textarea id="pasteContent" placeholder="喺度貼上你嘅小說文字..." oninput="checkDuplicatePaste()"></textarea>
+            <div class="modal-btns">
+                <button class="btn" onclick="closePasteModal()">取消</button>
+                <button class="btn btn-accent" onclick="savePastedText()">✅ 加入書架</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 分類管理彈窗 -->
+    <div class="modal-overlay" id="catManagerModal">
+        <div class="modal-box">
+            <h2>⚙️ 管理分類</h2>
+            <div id="catListContainer"></div>
+            <div class="modal-btns">
+                <button class="btn" onclick="closeCatManager()">關閉</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 閱讀器 -->
+    <div class="reader-overlay" id="readerOverlay">
+        <div class="fix-bar hidden" id="fixBar">
+            <span class="lbl">🔧 編碼修復：</span>
+            <button class="btn btn-xs encoding-fix-btn active" data-enc="auto">🤖 自動</button>
+            <button class="btn btn-xs encoding-fix-btn" data-enc="gbk">🇨🇳 GBK</button>
+            <button class="btn btn-xs encoding-fix-btn" data-enc="gb18030">🇨🇳 GB18030</button>
+            <button class="btn btn-xs encoding-fix-btn" data-enc="big5">🇭🇰 Big5</button>
+            <button class="btn btn-xs encoding-fix-btn" data-enc="utf8">🌐 UTF-8</button>
+        </div>
+        <div class="reader-top">
+            <button class="btn btn-sm" onclick="closeReader()">← 返回</button>
+            <button class="btn btn-sm" onclick="changeFS(-2)">A-</button>
+            <span style="font-weight:700;min-width:30px;text-align:center;" id="fsLabel">18</span>
+            <button class="btn btn-sm" onclick="changeFS(2)">A+</button>
+            <button class="btn btn-sm" onclick="toggleSearch()">🔍</button>
+            <button class="btn btn-sm" onclick="toggleTOC()">📑</button>
+            <button class="btn btn-sm" onclick="toggleFixBar()">🔧</button>
+        </div>
+        <div id="searchArea" class="hidden" style="padding:0 16px;">
+            <input type="search" class="search-box" id="searchInput" placeholder="🔍 搜尋關鍵字..." oninput="doSearch()" autocomplete="off">
+            <div class="search-results" id="searchResults"></div>
+        </div>
+        <div class="reader-content" id="readerContent"></div>
+        <div class="reader-bottom">
+            <button class="btn btn-sm" onclick="changeFS(-2)">A-</button>
+            <button class="btn btn-sm" onclick="toggleSearch()">🔍</button>
+            <button class="btn btn-sm" onclick="toggleTOC()">📑</button>
+            <button class="btn btn-sm" onclick="toggleFixBar()">🔧</button>
+            <button class="btn btn-sm" onclick="changeFS(2)">A+</button>
+        </div>
+    </div>
+
+    <div class="toc-backdrop" id="tocBackdrop" onclick="toggleTOC()"></div>
+    <div class="toc-sidebar" id="tocSidebar">
+        <h3 style="margin-bottom:16px;font-size:18px;">📑 章節目錄</h3>
+        <div id="tocList"></div>
+    </div>
+
+    <input type="file" class="file-input" id="fileInput" accept=".txt,.text" onchange="handleFile(event)">
+
+    <script>
+        // 固定資料庫名稱，永遠唔改！
+        const DB = 'BookshelfDB';
+        const DB_VERSION = 2; // 升級版本以加入 tags 支援
+        let db, currentBook = null, readTimer = null, readStart = null, currentRaw = null;
+        let currentCat = 'all';
+        let allCategories = [];
+        let currentView = 'grid';
+
+        function openDB() {
+            return new Promise((ok, no) => {
+                const r = indexedDB.open(DB, DB_VERSION);
+                r.onerror = () => no(r.error);
+                r.onsuccess = () => { db = r.result; ok(); };
+                r.onupgradeneeded = e => {
+                    const d = e.target.result;
+                    // 版本1 -> 2 遷移：加入 rawFiles, categories, 將舊 category 轉 tags
+                    if (e.oldVersion < 1) {
+                        if (!d.objectStoreNames.contains('books')) d.createObjectStore('books', { keyPath: 'id' });
+                        if (!d.objectStoreNames.contains('settings')) d.createObjectStore('settings', { keyPath: 'key' });
+                    }
+                    if (e.oldVersion < 2) {
+                        if (!d.objectStoreNames.contains('rawFiles')) d.createObjectStore('rawFiles', { keyPath: 'id' });
+                        if (!d.objectStoreNames.contains('categories')) d.createObjectStore('categories', { keyPath: 'name' });
+                        // 遷移舊數據會喺 init 時做，因為呢度拎唔到 data
+                    }
+                };
+            });
+        }
+
+        function dbOp(store, mode, fn) {
+            return new Promise((ok, no) => {
+                const tx = db.transaction(store, mode), s = tx.objectStore(store), req = fn(s);
+                if (req) { req.onsuccess = () => ok(req.result); req.onerror = () => no(req.error); }
+                else { tx.oncomplete = () => ok(); tx.onerror = () => no(tx.error); }
+            });
+        }
+
+        const saveBook = b => dbOp('books', 'readwrite', s => s.put(b));
+        const getBook = id => dbOp('books', 'readonly', s => s.get(id));
+        const getAllBooks = () => dbOp('books', 'readonly', s => s.getAll());
+        const removeBook = id => dbOp('books', 'readwrite', s => s.delete(id));
+        const saveRaw = (id, buf) => dbOp('rawFiles', 'readwrite', s => s.put({ id, buffer: buf }));
+        const getRaw = id => dbOp('rawFiles', 'readonly', s => s.get(id));
+        const removeRaw = id => dbOp('rawFiles', 'readwrite', s => s.delete(id));
+        const saveSet = (k, v) => dbOp('settings', 'readwrite', s => s.put({ key: k, value: v }));
+        const getSet = k => dbOp('settings', 'readonly', s => s.get(k)).then(r => r?.value);
+        const saveCat = n => dbOp('categories', 'readwrite', s => s.put({ name: n }));
+        const deleteCat = n => dbOp('categories', 'readwrite', s => s.delete(n));
+        const getAllCats = () => dbOp('categories', 'readonly', s => s.getAll()).then(r => r.map(x => x.name));
+
+        function tryDecode(buffer, enc) {
+            const map = { auto: ['utf-8', 'gbk', 'gb18030', 'big5', 'big5-hkscs'], utf8: ['utf-8'], gbk: ['gbk', 'gb18030'], gb18030: ['gb18030', 'gbk'], big5: ['big5', 'big5-hkscs'], 'big5-hkscs': ['big5-hkscs', 'big5'] };
+            const toTry = map[enc] || map.auto;
+            let best = '', bestScore = Infinity;
+            for (const e of toTry) {
+                try {
+                    const t = new TextDecoder(e).decode(buffer);
+                    const weird = (t.match(/[\ufffd\u0000-\u0008\u000b\u000c\u000e-\u001f]/g) || []).length;
+                    const qm = (t.match(/\?/g) || []).length;
+                    const score = (weird * 10 + qm) / Math.max(t.length, 1);
+                    if (score < bestScore && t.trim().length > 0) { bestScore = score; best = t; }
+                } catch (x) { }
+            }
+            if (bestScore > 0.5 || !best) { try { best = new TextDecoder('gbk').decode(buffer); } catch (x) { } if (!best) best = new TextDecoder('utf-8').decode(buffer); }
+            return best;
+        }
+
+        // 書名相似度計算（簡單 Levenshtein 距離）
+        function levenshtein(a, b) {
+            if (a.length === 0) return b.length;
+            if (b.length === 0) return a.length;
+            const matrix = [];
+            for (let i = 0; i <= b.length; i++) matrix[i] = [i];
+            for (let j = 0; j <= a.length; j++) matrix[0][j] = j;
+            for (let i = 1; i <= b.length; i++) {
+                for (let j = 1; j <= a.length; j++) {
+                    if (b.charAt(i - 1) === a.charAt(j - 1)) matrix[i][j] = matrix[i - 1][j - 1];
+                    else matrix[i][j] = Math.min(matrix[i - 1][j - 1] + 1, matrix[i][j - 1] + 1, matrix[i - 1][j] + 1);
+                }
+            }
+            return matrix[b.length][a.length];
+        }
+
+        function isSimilarTitle(t1, t2) {
+            if (!t1 || !t2) return false;
+            const s1 = t1.trim().toLowerCase(), s2 = t2.trim().toLowerCase();
+            if (s1 === s2) return true;
+            if (s1.includes(s2) || s2.includes(s1)) return true;
+            const dist = levenshtein(s1, s2);
+            const maxLen = Math.max(s1.length, s2.length);
+            return (dist <= 2 && maxLen > 2) || (dist / maxLen < 0.25);
+        }
+
+        async function checkDuplicate(title, text) {
+            const books = await getAllBooks();
+            const dup = books.find(b => {
+                // 書名相似
+                if (isSimilarTitle(b.title, title)) return true;
+                // 內容開頭相似
+                if (b.content && text && b.content.trim().substring(0, 200) === text.trim().substring(0, 200)) return true;
+                return false;
+            });
+            return dup;
+        }
+
+        function checkDuplicatePaste() {
+            const title = document.getElementById('pasteTitle').value.trim();
+            const text = document.getElementById('pasteContent').value.trim();
+            const warning = document.getElementById('dupWarning');
+            if (!text && !title) { warning.classList.remove('show'); return; }
+            getAllBooks().then(async books => {
+                const dup = await checkDuplicate(title || '未命名', text);
+                if (dup) {
+                    warning.textContent = `⚠️ 可能重複：「${dup.title}」`;
+                    warning.classList.add('show');
+                } else {
+                    warning.classList.remove('show');
+                }
+            });
+        }
+
+        async function addBook(text, title, cats, buffer) {
+            const tags = cats ? cats.split(',').map(t => t.trim()).filter(t => t) : [];
+            const dup = await checkDuplicate(title || '未命名', text);
+            if (dup) {
+                if (!confirm(`⚠️ 可能同「${dup.title}」重複！\n確定要繼續加入嗎？`)) return;
+            }
+            const book = {
+                id: Date.now().toString(),
+                title: title || '未命名',
+                content: text,
+                tags: tags,
+                progress: 0,
+                addedDate: new Date().toISOString(),
+                readTime: 0, todayReadTime: 0, lastReadDate: null,
+                fontSize: 18, encoding: 'auto'
+            };
+            await saveBook(book);
+            if (buffer) await saveRaw(book.id, buffer);
+            for (const t of tags) { if (t) await saveCat(t); }
+            await loadCategories();
+            toast('✅ 已加入書架！');
+            refreshBooks();
+            updateStats();
+        }
+
+        async function handleFile(e) {
+            const f = e.target.files[0]; if (!f) return;
+            toast('⏳ 處理中...');
+            try {
+                const buf = await f.arrayBuffer(), text = tryDecode(buf, 'auto');
+                const title = f.name.replace(/\.(txt|text)$/i, '');
+                const dup = await checkDuplicate(title, text);
+                if (dup) {
+                    if (!confirm(`⚠️ 可能同「${dup.title}」重複！\n確定要繼續加入嗎？`)) { e.target.value = ''; return; }
+                }
+                const cats = prompt('🏷️ 標籤（用逗號分隔）：') || '';
+                await addBook(text, title, cats, buf);
+            } catch (x) { toast('❌ 讀取失敗'); }
+            e.target.value = '';
+        }
+
+        function showPasteModal() {
+            document.getElementById('pasteModal').classList.add('active');
+            document.getElementById('pasteContent').focus();
+            document.getElementById('dupWarning').classList.remove('show');
+            updateCatSuggest();
+        }
+        function closePasteModal() {
+            document.getElementById('pasteModal').classList.remove('active');
+            document.getElementById('pasteContent').value = '';
+            document.getElementById('pasteTitle').value = '';
+            document.getElementById('pasteCat').value = '';
+            document.getElementById('dupWarning').classList.remove('show');
+        }
+        async function savePastedText() {
+            const text = document.getElementById('pasteContent').value.trim();
+            if (!text) { toast('❌ 請貼上文字'); return; }
+            const title = document.getElementById('pasteTitle').value.trim() || '未命名';
+            const cats = document.getElementById('pasteCat').value.trim();
+            await addBook(text, title, cats, null);
+            closePasteModal();
+        }
+
+        async function loadCategories() {
+            const cats = await getAllCats();
+            allCategories = cats;
+            renderTagRow();
+            updateCatSuggest();
+        }
+
+        function renderTagRow() {
+            const tagRow = document.getElementById('tagRow');
+            let html = '<span class="label">🏷️</span><span class="tag active" data-cat="all" onclick="filterCat(\'all\')">全部</span>';
+            for (const c of allCategories) {
+                html += `<span class="tag" data-cat="${escAttr(c)}" onclick="filterCat('${escAttr(c)}')">${esc(c)}</span>`;
+            }
+            html += '<button class="btn btn-xs" onclick="showCatManager()" style="margin-left:auto;">⚙️ 管理分類</button>';
+            tagRow.innerHTML = html;
+            // 保持當前選中狀態
+            if (currentCat !== 'all') {
+                document.querySelectorAll('#tagRow .tag').forEach(t => t.classList.remove('active'));
+                const activeTag = document.querySelector(`#tagRow .tag[data-cat="${escAttr(currentCat)}"]`);
+                if (activeTag) activeTag.classList.add('active');
+            }
+        }
+
+        function updateCatSuggest() {
+            const dl = document.getElementById('catSuggest');
+            dl.innerHTML = allCategories.map(c => `<option value="${escAttr(c)}">`).join('');
+        }
+
+        function filterCat(cat) {
+            currentCat = cat;
+            document.querySelectorAll('#tagRow .tag').forEach(t => t.classList.remove('active'));
+            const activeTag = document.querySelector(`#tagRow .tag[data-cat="${escAttr(cat)}"]`);
+            if (activeTag) activeTag.classList.add('active');
+            refreshBooks();
+        }
+
+        // 分類管理
+        function showCatManager() {
+            const modal = document.getElementById('catManagerModal');
+            modal.classList.add('active');
+            renderCatManager();
+        }
+        function closeCatManager() {
+            document.getElementById('catManagerModal').classList.remove('active');
+        }
+        async function renderCatManager() {
+            const cats = await getAllCats();
+            const container = document.getElementById('catListContainer');
+            if (cats.length === 0) {
+                container.innerHTML = '<p style="color:var(--text2);">未有分類</p>';
+                return;
+            }
+            container.innerHTML = cats.map(c => `
+                <div class="cat-list-item">
+                    <span class="name">🏷️ ${esc(c)}</span>
+                    <div class="actions">
+                        <button class="btn btn-xs" onclick="renameCat('${escAttr(c)}')">✏️</button>
+                        <button class="btn btn-xs" onclick="deleteCatConfirm('${escAttr(c)}')">🗑️</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+        async function renameCat(oldName) {
+            const newName = prompt('✏️ 新分類名：', oldName);
+            if (!newName || newName.trim() === '' || newName.trim() === oldName) return;
+            const trimmed = newName.trim();
+            // 更新所有書嘅標籤
+            const books = await getAllBooks();
+            for (const b of books) {
+                if (b.tags && b.tags.includes(oldName)) {
+                    b.tags = b.tags.map(t => t === oldName ? trimmed : t);
+                    await saveBook(b);
+                }
+            }
+            // 更新分類 store
+            await deleteCat(oldName);
+            await saveCat(trimmed);
+            await loadCategories();
+            renderCatManager();
+            toast('✅ 已更新');
+        }
+        async function deleteCatConfirm(name) {
+            if (!confirm(`🗑️ 確定刪除分類「${name}」？\n（書嘅標籤都會移除）`)) return;
+            const books = await getAllBooks();
+            for (const b of books) {
+                if (b.tags && b.tags.includes(name)) {
+                    b.tags = b.tags.filter(t => t !== name);
+                    await saveBook(b);
+                }
+            }
+            await deleteCat(name);
+            await loadCategories();
+            renderCatManager();
+            toast('🗑️ 已刪除');
+        }
+
+        function switchView(view) {
+            currentView = view;
+            document.querySelectorAll('#viewToggle .vt-btn').forEach(b => b.classList.remove('active'));
+            document.querySelector(`#viewToggle .vt-btn[data-view="${view}"]`).classList.add('active');
+            refreshBooks();
+        }
+
+        async function refreshBooks() {
+            const books = await getAllBooks();
+            const q = (document.getElementById('lobbySearch').value || '').toLowerCase();
+            let filtered = books;
+            if (currentCat !== 'all') filtered = filtered.filter(b => (b.tags || []).includes(currentCat));
+            if (q) filtered = filtered.filter(b => b.title.toLowerCase().includes(q) || (b.tags || []).some(t => t.toLowerCase().includes(q)));
+
+            const c = document.getElementById('bookContainer');
+            document.getElementById('bookCount').textContent = `共 ${filtered.length} 本書`;
+
+            if (!filtered.length) { c.innerHTML = '<div class="empty-state">📭 冇相關書籍</div>'; return; }
+
+            if (currentView === 'list') {
+                c.className = 'book-list-mode';
+                c.innerHTML = filtered.map(b => {
+                    const p = b.content ? ((b.progress || 0) / b.content.length * 100).toFixed(1) : 0;
+                    return `<div class="book-row" onclick="openBook('${b.id}')"><span class="title">📖 ${esc(b.title)}</span><span class="meta">📊 ${p}% | ⏱️ ${b.readTime || 0}分</span></div>`;
+                }).join('');
+            } else {
+                c.className = 'book-grid';
+                c.innerHTML = filtered.map(b => {
+                    const t = b.content?.length || 1, p = ((b.progress || 0) / t * 100).toFixed(1);
+                    const tagsHtml = (b.tags || []).map(tg => `<span class="book-cat">${esc(tg)}</span>`).join('');
+                    return `<div class="book-card" onclick="openBook('${b.id}')"><div class="book-title">📖 ${esc(b.title)}</div>${tagsHtml ? `<div class="book-tags">${tagsHtml}</div>` : ''}<div class="book-meta"><span>📊 ${p}%</span><span>⏱️ ${b.readTime || 0}分</span></div><div class="pbar"><div class="pfill" style="width:${p}%"></div></div><div style="display:flex;gap:6px;flex-wrap:wrap;"><button class="btn btn-xs" onclick="event.stopPropagation();delBook('${b.id}')">🗑️</button><button class="btn btn-xs" onclick="event.stopPropagation();renBook('${b.id}')">✏️</button><button class="btn btn-xs" onclick="event.stopPropagation();editTags('${b.id}')">🏷️</button></div></div>`;
+                }).join('');
+            }
+        }
+
+        function esc(s) { const d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
+        function escAttr(s) { return s.replace(/'/g, "\\'").replace(/"/g, '&quot;'); }
+
+        async function updateStats() {
+            const books = await getAllBooks();
+            let tt = 0, td = 0, tp = 0; const today = new Date().toDateString();
+            books.forEach(b => { tt += b.readTime || 0; tp += b.content ? ((b.progress || 0) / b.content.length * 100) : 0; if (b.lastReadDate && new Date(b.lastReadDate).toDateString() === today) td += b.todayReadTime || 0; });
+            document.getElementById('statBooks').textContent = `📖 ${books.length}`;
+            document.getElementById('statTime').textContent = `⏱️ ${tt}分`;
+            document.getElementById('statToday').textContent = `🎯 ${td}分`;
+            document.getElementById('statProgress').textContent = `📊 ${books.length ? (tp / books.length).toFixed(1) : 0}%`;
+        }
+
+        async function delBook(id) { if (!confirm('🗑️ 確定刪除？')) return; await removeBook(id); await removeRaw(id); toast('🗑️ 已刪除'); refreshBooks(); updateStats(); }
+        async function renBook(id) { const b = await getBook(id); const n = prompt('✏️ 新書名：', b.title); if (n && n.trim()) { b.title = n.trim(); await saveBook(b); refreshBooks(); toast('✏️ 已改名'); } }
+        async function editTags(id) {
+            const b = await getBook(id);
+            const n = prompt('🏷️ 標籤（用逗號分隔）：', (b.tags || []).join(','));
+            if (n !== null) {
+                b.tags = n.split(',').map(t => t.trim()).filter(t => t);
+                await saveBook(b);
+                for (const t of b.tags) { if (t) await saveCat(t); }
+                await loadCategories();
+                refreshBooks();
+                toast('🏷️ 已更新');
+            }
+        }
+
+        async function openBook(id) {
+            const b = await getBook(id); if (!b) return;
+            currentBook = b;
+            document.getElementById('mainPage').classList.add('hidden');
+            document.getElementById('readerOverlay').classList.add('active');
+            document.getElementById('fixBar').classList.add('hidden');
+            updateContent(b.content, b.fontSize);
+            if (b.progress > 0 && b.content) { const el = document.getElementById('readerContent'); setTimeout(() => { el.scrollTop = el.scrollHeight * (b.progress / b.content.length); }, 100); }
+            document.getElementById('searchArea').classList.add('hidden');
+            document.getElementById('searchResults').innerHTML = '';
+            document.getElementById('tocSidebar').classList.remove('active');
+            document.getElementById('tocBackdrop').classList.remove('active');
+            const raw = await getRaw(b.id); currentRaw = raw?.buffer || null;
+            readStart = Date.now(); if (readTimer) clearInterval(readTimer); readTimer = setInterval(saveProgress, 5000);
+            updateTOC(b);
+        }
+
+        function updateContent(text, fs) { const el = document.getElementById('readerContent'); el.style.fontSize = (fs || 18) + 'px'; el.textContent = text; document.getElementById('fsLabel').textContent = fs || 18; }
+
+        function closeReader() {
+            if (readTimer) clearInterval(readTimer); saveProgress();
+            document.getElementById('readerOverlay').classList.remove('active');
+            document.getElementById('mainPage').classList.remove('hidden');
+            document.getElementById('tocSidebar').classList.remove('active');
+            document.getElementById('tocBackdrop').classList.remove('active');
+            document.getElementById('fixBar').classList.add('hidden');
+            currentBook = null; currentRaw = null; refreshBooks(); updateStats();
+        }
+
+        async function saveProgress() {
+            if (!currentBook || !readStart) return;
+            const b = await getBook(currentBook.id); if (!b) return;
+            const el = document.getElementById('readerContent');
+            if (el && b.content) b.progress = Math.floor((el.scrollTop / el.scrollHeight) * b.content.length);
+            const elapsed = Math.floor((Date.now() - readStart) / 60000);
+            if (elapsed > 0) { b.readTime = (b.readTime || 0) + elapsed; const today = new Date().toDateString(); const last = b.lastReadDate ? new Date(b.lastReadDate).toDateString() : null; b.todayReadTime = (last === today ? (b.todayReadTime || 0) : 0) + elapsed; b.lastReadDate = new Date().toISOString(); readStart = Date.now(); }
+            await saveBook(b); currentBook = b;
+        }
+
+        function changeFS(d) { if (!currentBook) return; currentBook.fontSize = Math.max(12, Math.min(36, (currentBook.fontSize || 18) + d)); document.getElementById('readerContent').style.fontSize = currentBook.fontSize + 'px'; document.getElementById('fsLabel').textContent = currentBook.fontSize; }
+
+        function toggleFixBar() { const bar = document.getElementById('fixBar'); bar.classList.toggle('hidden'); if (!bar.classList.contains('hidden')) toast('🔧 揀一個編碼重新解碼'); }
+
+        async function reDecode(enc) {
+            if (!currentBook || !currentRaw) { toast('❌ 只支援上傳嘅TXT檔案'); return; }
+            document.querySelectorAll('.encoding-fix-btn').forEach(b => b.classList.remove('active'));
+            document.querySelector(`.encoding-fix-btn[data-enc="${enc}"]`)?.classList.add('active');
+            const newText = tryDecode(currentRaw, enc);
+            updateContent(newText, currentBook.fontSize);
+            currentBook.content = newText; currentBook.encoding = enc; await saveBook(currentBook);
+            updateTOC(currentBook); document.getElementById('readerContent').scrollTop = 0;
+            toast('✅ 已用 ' + enc.toUpperCase() + ' 重新解碼！');
+        }
+
+        document.addEventListener('click', e => { if (e.target.classList.contains('encoding-fix-btn')) reDecode(e.target.dataset.enc); });
+
+        function toggleSearch() { document.getElementById('searchArea').classList.toggle('hidden'); if (!document.getElementById('searchArea').classList.contains('hidden')) document.getElementById('searchInput').focus(); }
+
+        function doSearch() {
+            if (!currentBook) return;
+            const q = document.getElementById('searchInput').value.toLowerCase(), rd = document.getElementById('searchResults');
+            if (!q) { rd.innerHTML = ''; return; }
+            const c = currentBook.content.toLowerCase(), res = [];
+            let pos = c.indexOf(q), cnt = 0;
+            while (pos !== -1 && cnt < 20) { const s = Math.max(0, pos - 25), e = Math.min(c.length, pos + q.length + 25); const ex = (s > 0 ? '...' : '') + currentBook.content.substring(s, e).replace(/\n/g, ' ') + (e < c.length ? '...' : ''); const re = new RegExp(q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi'); res.push({ pos, excerpt: ex.replace(re, m => `<b style="background:#ffc107;color:#000;">${m}</b>`) }); pos = c.indexOf(q, pos + 1); cnt++; }
+            rd.innerHTML = res.length ? res.map(r => `<div class="search-result" onclick="jumpTo(${r.pos})">📍 ${r.excerpt}</div>`).join('') : '<div style="padding:14px;color:var(--text2);">找不到結果</div>';
+        }
+
+        function jumpTo(pos) {
+            if (!currentBook) return;
+            document.getElementById('readerContent').scrollTop = (pos / currentBook.content.length) * document.getElementById('readerContent').scrollHeight;
+            document.getElementById('searchArea').classList.add('hidden'); toast('📍 已跳轉');
+        }
+
+        function toggleTOC() { document.getElementById('tocSidebar').classList.toggle('active'); document.getElementById('tocBackdrop').classList.toggle('active'); }
+
+        function updateTOC(b) {
+            const tl = document.getElementById('tocList');
+            const patterns = [/第[一二三四五六七八九十百千\d]+[章节回]/g, /第[一二三四五六七八九十百千\d]+[章節回]/g, /Chapter\s+\d+/gi, /^\d+[\.、\s]+.+/gm];
+            let ch = [];
+            for (const p of patterns) { const m = b.content.match(p); if (m) ch = ch.concat(m); }
+            ch = [...new Set(ch)];
+            if (!ch.length) { tl.innerHTML = '<div style="color:var(--text2);">📭 未偵測到章節</div>'; return; }
+            tl.innerHTML = ch.slice(0, 100).map(c => { const i = b.content.indexOf(c); return `<div class="toc-item" onclick="jumpTo(${i});toggleTOC();">${esc(c)}</div>`; }).join('');
+        }
+
+        async function toggleTheme() {
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            document.documentElement.setAttribute('data-theme', isDark ? '' : 'dark');
+            await saveSet('theme', isDark ? 'light' : 'dark'); toast(isDark ? '☀️ 日間模式' : '🌙 夜間模式');
+        }
+
+        async function exportAll() {
+            const books = await getAllBooks();
+            const blob = new Blob([JSON.stringify({ books, exportDate: new Date().toISOString(), version: 2 }, null, 2)], { type: 'application/json' });
+            const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `bookshelf-${new Date().toISOString().split('T')[0]}.json`; a.click();
+            toast('💾 備份已下載');
+        }
+
+        function importAll() {
+            const inp = document.createElement('input'); inp.type = 'file'; inp.accept = '.json';
+            inp.onchange = async e => {
+                try {
+                    const t = await e.target.files[0].text(), data = JSON.parse(t);
+                    if (!data.books) throw new Error('格式錯誤');
+                    if (!confirm(`📥 匯入 ${data.books.length} 本書？`)) return;
+                    const tx = db.transaction('books', 'readwrite'), store = tx.objectStore('books');
+                    for (const b of data.books) {
+                        if (!b.tags) b.tags = [];
+                        if (b.category) { if (!b.tags.includes(b.category)) b.tags.push(b.category); delete b.category; }
+                        await store.put(b);
+                    }
+                    await new Promise(r => { tx.oncomplete = r; });
+                    toast('✅ 匯入完成！'); refreshBooks(); updateStats(); loadCategories();
+                } catch (x) { console.error(x); toast('❌ 匯入失敗'); }
+            }; inp.click();
+        }
+
+        function toast(msg) {
+            document.querySelectorAll('.toast').forEach(t => t.remove());
+            const t = document.createElement('div'); t.className = 'toast'; t.textContent = msg;
+            document.body.appendChild(t); setTimeout(() => t.remove(), 1800);
+        }
+
+        document.addEventListener('keydown', e => { if (e.key === 'Escape' && currentBook) closeReader(); });
+
+        // 初始化 + 資料遷移
+        (async function () {
+            await openDB();
+            // 遷移舊數據：將可能有 category 嘅書轉為 tags
+            const books = await getAllBooks();
+            for (const b of books) {
+                let changed = false;
+                if (!b.tags) { b.tags = []; changed = true; }
+                if (b.category) {
+                    if (!b.tags.includes(b.category)) { b.tags.push(b.category); changed = true; }
+                    delete b.category; changed = true;
+                }
+                if (changed) await saveBook(b);
+            }
+            // 清理冇書用嘅分類（可選，但保留畀用戶管理）
+            const theme = await getSet('theme');
+            if (theme === 'dark') document.documentElement.setAttribute('data-theme', 'dark');
+            await loadCategories();
+            refreshBooks();
+            updateStats();
+        })();
+    </script>
+</body>
+</html>        body{
+            font-family:-apple-system,BlinkMacSystemFont,'PingFang HK',sans-serif;
+            background:var(--bg);color:var(--text);
+            min-height:100vh;padding:16px 16px 100px;
+            transition:background .3s,color .3s;
+        }
+        .header{
+            display:flex;justify-content:space-between;align-items:center;
+            padding:8px 0 16px;margin-bottom:16px;
+            border-bottom:2px solid var(--border);
+        }
+        .header h1{font-size:24px;font-weight:800;}
+        .header-btns{display:flex;gap:6px;}
+        .btn{
+            display:inline-flex;align-items:center;justify-content:center;gap:6px;
+            padding:12px 18px;border-radius:14px;border:2px solid var(--border);
+            background:var(--surface);color:var(--text);
+            font-size:15px;font-weight:600;cursor:pointer;
+            transition:all .15s;min-height:48px;font-family:inherit;white-space:nowrap;
+        }
+        .btn:active{transform:scale(.95);background:var(--hover);}
+        .btn-accent{background:var(--accent);color:var(--bg);border-color:var(--accent);}
+        .btn-sm{padding:8px 14px;font-size:14px;min-height:40px;border-radius:10px;}
+        .btn-xs{padding:6px 10px;font-size:13px;min-height:34px;border-radius:8px;}
+        .upload-row{display:flex;gap:10px;margin:16px 0;flex-wrap:wrap;}
+        .upload-row .btn{flex:1;min-width:140px;}
+        .search-bar{width:100%;padding:14px 18px;border:2px solid var(--border);border-radius:16px;font-size:16px;background:var(--surface);color:var(--text);font-family:inherit;margin:12px 0;}
         .tool-row{display:flex;gap:8px;align-items:center;margin:12px 0;flex-wrap:wrap;}
         .tag-row{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0;align-items:center;}
         .tag-row .label{font-size:14px;font-weight:700;color:var(--text2);}
